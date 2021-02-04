@@ -319,6 +319,10 @@ def bmpToTst(filenames):
 if __name__ == "__main__":
     # Direktorij u kojem se nalaze frameovi u bitmap formatu
     directory = "./badapple/"
+    if not (os.path.isdir(directory)):
+        print("Direktorij {} ne postoji.".format(directory.split("./")[1]))
+        exit()
+
     # Direktorij u koji ce se spremiti .asm fileovi
     assDirectory = "./assembly"
     # U fileu "srcFull.txt" se nalazi lista svih frameova 'ls > srcFull.txt'
