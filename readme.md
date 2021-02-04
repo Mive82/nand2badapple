@@ -24,14 +24,14 @@ Jedna assembly datoteka u prosjeku ima 10 frameova.
 1. Ako si na Linuxu i imaš instaliran `7z`, pokreni `./extract.sh`.  
    Ako nisi, ručno raspakiraj `frames.zip` tako da struktura mape bude:
     ```
-    .badapple/out-####.bmp
-    ..gitignore
-    .code.py
-    .extract.sh
-    .frames.zip
-    .pack.sh
-    .readme.md
-    .srcFull.txt
+    badapple/out-####.bmp
+    .gitignore
+    code.py
+    extract.sh
+    frames.zip
+    pack.sh
+    readme.md
+    srcFull.txt
     ```
 2. Pokreni `code.py` sa jednim od ovih argumenata:
 
@@ -58,7 +58,7 @@ Datoteka                 | Svrha
 -------------------------|----------------------------------------
 `main.tst`               | Skripta koja stavlja vrijednosti pixela direktno u framebuffer
 `empty.asm`              | Assembly file sa beskonačnom petljom kojeg `main.tst` koristi
-`assembly/out-####.bmp`  | Mapa sa dovršenim assembly datotekama (100 MB)
+`assembly/out-####.asm`  | Mapa sa dovršenim assembly datotekama (100 MB)
 `assembly/script.tst`    | Skripta koja redom učitava assembly datoteke
 `badapple/out-####.bmp`  | Otpakirana `frames.zip` datoteka (80 MB)
 `test.tst`               | Privremena datoteka, kasnije postane `assembly/script.tst`
