@@ -193,7 +193,7 @@ def writeLoopKod(i=1):
     kod = ""
     global loopCodeNum
     while (i):
-        kod += "@32767\nD=A\n@R0\nM=D\n(LOOP{})\n@R0\nM=M-1\nD=M\n@LOOP{}\nD;JGT\n".format(
+        kod += "@10000\nD=A\n@R0\nM=D\n(LOOP{})\n@R0\nM=M-1\nD=M\n@LOOP{}\nD;JGT\n".format(
             loopCodeNum, loopCodeNum)
         loopCodeNum += 1
         i -= 1
@@ -212,7 +212,16 @@ def bmpToAsm(filenames, destFolder):
     tst = open('test.tst', 'w')
     i = 0
 
+    delayNum = 4
+
+    asmProgress = 0
+    frameProgress = 0
+
     while (i < totalFrames):
+
+        asmProgress += 1
+        frameProgress += 1
+
         x = directory + os.path.splitext(filenames[i])[0]
         data = initData(x)
 
@@ -231,10 +240,11 @@ def bmpToAsm(filenames, destFolder):
         capacityLeft = capacityLeft - totalLines - 18
         kod = outputIframe(data)
         output.write(kod)
-        kod = writeLoopKod(1)
+        kod = writeLoopKod(delayNum)
         output.write(kod)
+        capacityLeft -= delayNum * 10
 
-        totalLines += 32768
+        totalLines += (32768 * delayNum)
 
         # Advance na iduci frame
         i += 1
@@ -249,13 +259,21 @@ def bmpToAsm(filenames, destFolder):
         # Puni ostatak filea sa P-frameovima
         while (capacityLeft - nextFrame - 18 > 0):
 
+            progressPerc = int((frameProgress / totalFrames) * 100)
+
+            frameProgress += 1
+            print(
+                '\rObradujem frame {0}/{1}, pisem .asm file {3} [{2}%]'.format(frameProgress, totalFrames, progressPerc, asmProgress), end="")
+
             capacityLeft = capacityLeft - nextFrame - 18
             totalLines += nextFrame
             kod = outputPframe(data)
             output.write(kod)
-            kod = writeLoopKod(1)
+            kod = writeLoopKod(delayNum)
             output.write(kod)
-            totalLines += 32768
+            capacityLeft -= delayNum * 10
+
+            totalLines += (10000 * delayNum)
             i += 1
             frames += 1
             if (i >= totalFrames):
@@ -267,7 +285,7 @@ def bmpToAsm(filenames, destFolder):
         kod = "(END)\n@END\n0;JMP"
         output.writelines(kod)
         output.close()
-        kod = "repeat {}".format(totalLines + 200000) + "{\nticktock;\n}\n"
+        kod = "repeat {}".format(str(totalLines + 10000) + "{\nticktock;\n}\n")
         tst.write(kod)
     tst.close()
     os.rename("test.tst", "assembly/script.tst")
@@ -288,7 +306,15 @@ def bmpToTst(filenames):
     global prevData
     prevData = [0 for i in range(1, 10000)]
 
+    progressNum = 0
+    totalNum = len(filenames)
+
     for x in filenames:
+
+        progressNum += 1
+        progressPerc = int((progressNum/totalNum) * 100)
+        print(
+            '\rObradujem frame {}/{} [{}%]'.format(progressNum, totalNum, progressPerc), end="")
 
         x = directory + os.path.splitext(x)[0]
         data = initData(x)
@@ -326,7 +352,7 @@ if __name__ == "__main__":
     # Direktorij u koji ce se spremiti .asm fileovi
     assDirectory = "./assembly"
     # U fileu "srcFull.txt" se nalazi lista svih frameova 'ls > srcFull.txt'
-    src = open('srcFull.txt', 'r')
+    # src = open('srcFull.txt', 'r')
 
     doAsm = False
     doTst = False
@@ -360,12 +386,11 @@ if __name__ == "__main__":
         debugTxt.write("Begin Debug\n\n")
         debugTxt.close()
 
-    filenames = []
-    for i in src:
-        filenames.append(i)
+    filenames = os.listdir(directory)
     if len(filenames) == 0:
         print(
-            "Nije pronaden ni jedan frame, pogledaj jesu u listi 'srcFull.txt' dobro navedene datoteke.\nIzlazim."
+            "Nije pronaden ni jedan frame u mapi {}.\nIzlazim.".format(
+                directory.split("./")[1])
         )
         exit()
 
@@ -387,20 +412,33 @@ if __name__ == "__main__":
         bmpToAsm(filenames, assDirectory)
         end = time.time()
 
-        print("Pisanje .asm fileova dovrseno za {}s".format(int(end - start)))
+        # print("Pisanje .asm fileova dovrseno za {}s".format(int(end - start)))
+
+        if (end-start) < 60:
+            print("Pisanje .asm fileova dovrseno za {}s".format(
+                int(end - start)))
+        else:
+            print("Pisanje .asm fileova dovrseno za {}min, {}s".format(
+                int(end-start)//60, int(end-start) % 60))
+
         print(
             "Zavrsna skripta za ucitavanje svih .asm fileova se nalazi u mapi {}."
             .format(assDirectory.split("./")[1]))
 
     if doTst:
-        print("Pišem 'main.tst' skriptu.")
+
+        print("Pišem main.tst skriptu.")
 
         start = time.time()
         bmpToTst(filenames)
         end = time.time()
 
-        print("Pisanje 'main.tst' skripte dovrseno za {}s".format(
-            int(end - start)))
+        if (end-start) < 60:
+            print("Pisanje 'main.tst' skripte dovrseno za {}s".format(
+                int(end - start)))
+        else:
+            print("Pisanje 'main.tst' skripte dovrseno za {}min, {}s".format(
+                int(end-start)//60, int(end-start) % 60))
         print(
             "Zavrsna skripta za direktno pisanje u framebuffer 'main.tst' se nalazi pored ovog programa."
         )

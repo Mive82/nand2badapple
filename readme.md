@@ -18,28 +18,22 @@ Ovaj program koristi jako jednostavnu inter-frame kompresiju, odnosno, umjesto d
 
 Kako hack računalo koristi 16-bitne vrijenosti za crtanje po ekranu, samo gleda koji dijelovi ekrana su drugačiji i stavlja promijenjenu 16-bitnu vrijednost.
 
-Jedna assembly datoteka u prosjeku ima 10 frameova.
 
 ## Usage
 1. Ako si na Linuxu i imaš instaliran `7z`, pokreni `./extract.sh`.  
    Ako nisi, ručno raspakiraj `frames.zip` tako da struktura mape bude:
     ```
+    ...
     badapple/out-####.bmp
-    .gitignore
-    code.py
-    extract.sh
-    frames.zip
-    pack.sh
-    readme.md
-    srcFull.txt
+    ...
     ```
-2. Pokreni `code.py` sa jednim od ovih argumenata:
+2. Pokreni `asmcode.py` sa jednim od ovih argumenata:
 
     Windows              | Linux           | Objašnjenje
     ---------------------|-----------------|------------
-    `python code.py`     | `./code.py`     | Pravi assembly datoteke i main.tst skriptu
-    `python code.py asm` | `./code.py asm` | Pravi samo assembly datoteke
-    `python code.py tst` | `./code.py tst` | Pravi samo main.tst skriptu
+    `python asmcode.py`     | `./asmcode.py`     | Pravi assembly datoteke i main.tst skriptu
+    `python asmcode.py asm` | `./asmcode.py asm` | Pravi samo assembly datoteke
+    `python asmcode.py tst` | `./asmcode.py tst` | Pravi samo main.tst skriptu
 
 3. Otvori CPU Emulator i pokreni `assembly/script.tst` ili `main.tst`
 
@@ -47,9 +41,8 @@ Jedna assembly datoteka u prosjeku ima 10 frameova.
 ### Prije pokretanja
 Datoteka                 | Svrha
 -------------------------|-----------------------------------------
-`code.py`                | Glavni kod
+`asmcode.py`                | Glavni kod
 `frames.zip`             | Zip datoteka sa bitmap frameovima rezolucije 384x256x1
-`srcFull.txt`            | Popis svih frameova koji se nalaze u badapple folderu. Hardkodano, ali brže za pristupiti. TODO: Maknuti ovisnost o ovoj datoteci
 `extract.sh` i `pack.sh` | Skripte za pakiranje i raspakiranje `frames.zip` datoteke.
 `readme.md`              | Ovo što trenutno čitate
 
