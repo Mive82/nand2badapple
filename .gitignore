@@ -1,13 +1,15 @@
 assembly
 badapple
+badappleTest
 frames
 frames.zip.bak
 badapple.mkv
 empty.asm
 main.tst
 test.tst
-jackcode.py
-Main.jack
+#jackcode.py
+#Main.jack
+jackOutput
 Main.vm
 out.txt
 srcFull.txt
